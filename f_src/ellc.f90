@@ -395,7 +395,7 @@ sphere_2 =  (imodel2 == starshape_sphere)
 if (imodel1 == starshape_love) then
   frot1 = 1
   hf1 = binary_pars(38)
-  if ((hf1 <= 2/3.).or.(hf1 > 5)) then
+  if ((hf1 < 0.).or.(hf1 > 5/2.)) then
     if (verbose > v_silent) then
       print *,'End ELLC - invalid value for h_f,1'
       print *,'h_f,1 = ',hf1
@@ -417,7 +417,7 @@ endif
 if (imodel2 == starshape_love) then
   frot2 = 1
   hf2 = binary_pars(39)
-  if ((hf2 <= 2/3.).or.(hf2 > 5)) then
+  if ((hf2 < 0.).or.(hf2 > 5/2.)) then
     if (verbose > v_silent) then
       print *,'End ELLC - invalid value for h_f,2'
       print *,'h_f,2 = ',hf2
