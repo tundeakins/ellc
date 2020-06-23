@@ -681,8 +681,8 @@ double precision              :: qr
 !qr      = planet asymmetry as defined in correia
 
 
-b=radius
-qr=0.5d0*h_f*qmass*(b/rsep)**3       !from eqn(12) in correia(2014)
+qr=0.5d0*h_f*qmass*(radius/rsep)**3       !from eqn(12) in correia(2014)
+b=radius*(1-(2.d0/3.d0)*qr)
 if (qr >= 1) then
     if (verbose > v_silent) print *,'shape_love: qr >1; b, qr  =', b, qr
     a = bad_dble
@@ -696,7 +696,7 @@ a = b*(1.d0+3.d0*qr)          !eqn(10)
 c = b*(1.d0-qr)               !eqn(11)
 d = radius*qmass*radius**4    !From Chandrasekhar using delta_3 = 1
 
-if (verbose > v_debug) print *,'shape_love: a,c,d,qr =', a,c,d,qr
+if (verbose > v_debug) print *,'shape_love: a,b,c,d,qr =', a,b,c,d,qr
 end subroutine shape_love
 
 !-----------------------------------------------------------------------
