@@ -285,22 +285,24 @@ case(starshape_poly3p0)
 
 case(starshape_love)
 
+
   t = 1
-  it = 0
-  do while (t.gt.ttol)
-    it = it + 1
-    if (it > itmax) then
-      if(verbose >= v_error) then
-        print *,'starshape: failed to converge : t  = ',t
-      endif
-      return
-    endif
-    call shape_love(rt,rsep_l,spar,q,a,b,c,d,verbose-1)
-    if(d.eq.bad_dble) return
-    t = (a*b*c)**third/radius
-    rt = rt/t
-    t = abs(t-1.d0)
-  end do
+  call shape_love(rt,rsep_l,spar,q,a,b,c,d,verbose-1)   !(a*b*c)**third/radius is accurate within 1e-7
+!  it = 0
+!  do while (t.gt.ttol)
+!    it = it + 1
+!    if (it > itmax) then
+!      if(verbose >= v_error) then
+!        print *,'starshape: failed to converge : t  = ',t
+!      endif
+!      return
+!    endif
+!    call shape_love(rt,rsep_l,spar,q,a,b,c,d,verbose-1)
+!    if(d.eq.bad_dble) return
+!    t = (a*b*c)**third/radius
+!    rt = rt/t
+!    t = abs(t-1.d0)
+!  end do
 
 case default
   if(verbose >= v_error) then
@@ -681,8 +683,8 @@ double precision              :: qr
 !qr      = planet asymmetry as defined in correia
 
 
-qr=0.5d0*h_f*qmass*(radius/rsep)**3       !from eqn(12) in correia(2014)
-b=radius*(1-(2.d0/3.d0)*qr)
+qr = 0.5d0*h_f*qmass*(radius/rsep)**3       !from eqn(6) in akinsanmi et al 2019 (https://www.aanda.org/articles/aa/pdf/2019/01/aa34215-18.pdf, see also eqn 12 correia(2014))
+b = radius*(1-(2.d0/3.d0)*qr + (17.d0/9.d0)*qr**2 - (328.d0/81.d0)*qr**3 + (2558.d0/243.d0)*qr**4 )				! from eqn(3) akinsanmi et al 2019 but including more orders of qr for better accuracy	
 if (qr >= 1) then
     if (verbose > v_silent) print *,'shape_love: qr >1; b, qr  =', b, qr
     a = bad_dble
@@ -692,9 +694,9 @@ if (qr >= 1) then
     return
 endif
 
-a = b*(1.d0+3.d0*qr)          !eqn(10)
-c = b*(1.d0-qr)               !eqn(11)
-d = radius*qmass*radius**4    !From Chandrasekhar using delta_3 = 1
+a = b*(1.d0+3.d0*qr)          !eqn(10) correia 2014
+c = b*(1.d0-qr)               !eqn(11) correia 2014
+d = 0 !radius*qmass*radius**4    !From Chandrasekhar using delta_3 = 1
 
 if (verbose > v_debug) print *,'shape_love: a,b,c,d,qr =', a,b,c,d,qr
 end subroutine shape_love
