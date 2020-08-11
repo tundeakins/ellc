@@ -557,7 +557,7 @@ def lc(t_obs, radius_1, radius_2, sbratio, incl,
     if rotfac_1 != 1:
       raise Exception(
                 'Non-synchronous rotation not implemented for shape_1="love"')
-    if (hf_1 <= 2/3.) or (hf_1 > 5):
+    if (hf_1 < 0.) or (hf_1 > 5/2.):
         raise Exception('Invalid value for hf_1')
     par[37] = hf_1
 
@@ -565,7 +565,7 @@ def lc(t_obs, radius_1, radius_2, sbratio, incl,
     if rotfac_2 != 1:
       raise Exception(
                 'Non-synchronous rotation not implemented for shape_2="love"')
-    if (hf_2 <= 2/3.) or (hf_2 > 5):
+    if (hf_2 < 0.) or (hf_2 > 5/2.):
         raise Exception('Invalid value for hf_2')
     par[38] = hf_2
      
