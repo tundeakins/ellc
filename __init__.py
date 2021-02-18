@@ -38,7 +38,7 @@ except:
 
 
 try:
-      from ellc.lc import lc, projected_ellipse_area
+      from ellc.lc import lc, projected_ellipse_area, projected_ellipse_area_correia
 except:
       pass
 

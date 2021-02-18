@@ -623,7 +623,7 @@ def lc(t_obs, radius_1, radius_2, sbratio, incl,
   return flux
 
 
-def projected_ellipse_area(phases,Rv,aR,hf,qmass,incl):
+def projected_ellipse_area(phases,Rv,aR,hf,qmass,incl, tmid =0):
     """
     Calculate the phases-depended projected area of a triaxial ellipsoid (ellipse).
     Minimum projected area is at mid transit (phases 0) 
@@ -647,6 +647,9 @@ def projected_ellipse_area(phases,Rv,aR,hf,qmass,incl):
         
     incl : float;
         inclination of the orbit in degrees
+            
+    tmid : float;
+        phase of transit minimum (mid transit phase). Default is 0
         
     Returns:
     --------
@@ -664,9 +667,11 @@ def projected_ellipse_area(phases,Rv,aR,hf,qmass,incl):
     cx = bx*(1.-qr)
     abc=np.array([ax,bx,cx])
     
-    
-    
-    phis = np.radians(phases*360)
+    ph = phases    #store original
+    if isinstance(phases, (float,int)): 
+        phases = [phases]*2
+
+    phis = np.radians( (np.array(phases)-tmid)*360)
     proj_area = np.zeros_like(phis)
     
     for i, phi in enumerate(phis):
@@ -740,8 +745,81 @@ def projected_ellipse_area(phases,Rv,aR,hf,qmass,incl):
             else:
                 phi = 0.5*np.pi + (0.5*np.pi -np.arctan((a-c))/(2.*b))/2.
         
-        proj_area[i] = np.pi*a_p*b_p 
+        proj_area[i] = np.pi*a_p*b_p
+        
+        if isinstance(ph, (float,int)):
+            return proj_area[i], abc
 
-    return proj_area, abc #, np.cos(phi), np.sin(phi)
+
+    return proj_area, abc
+    
+def projected_ellipse_area_correia(phases,Rv,aR,hf,qmass,incl, tmid =0):
+    """
+    Calculate the phases-depended projected area of a triaxial ellipsoid (ellipse) using equations from correia2014.
+    it produces slightly different result from `projected_ellipse_area` which is the default used within ellc in calculation.
+    Minimum projected area is at mid transit (phases 0) 
+    
+    Parameters:
+    -----------
+    phases: float; array-like;
+        Input phases to calculate
+    
+    Rv: float;
+        Volumetric radius (abc)**1/3 of the ellipsoid
+        
+    aR: float;
+        scaled semi-major axis
+    
+    hf: float;
+        second fluid Love number of the planet
+        
+    qmass: float;
+        ratio of planet to stellar mass
+        
+    incl : float;
+        inclination of the orbit in degrees
+        
+    tmid : float;
+        phase of transit minimum (mid transit phase). Default is 0
+        
+    Returns:
+    --------
+    proj_area, abc : float/array-like, array;
+        projected area of the ellipse (proj_area), and the semiprincipal axes abc= [a,b,c] of the ellipsoid.
+        To get the projected radius of the planet Rtr  = sqrt(proj_area/pi)
+    	
+     
+    """
+    qr = 0.5*hf*1/qmass*(Rv/aR)**3
+    bx = Rv*(1-(2./3.)*qr + (17./9.)*qr**2 - (328./81.)*qr**3 + (2558./243.)*qr**4)
+    ax = bx*(1.+3.*qr)          #eqn(10) correia 2014
+    cx = bx*(1.-qr)
+    abc=np.array([ax,bx,cx])
+    
+    
+    phi = np.radians((np.array(phases)-tmid+0.25)*360)  #(shift by midtransit to phase 0  and make equivalent to phi = halfpi (90degrees) )
+    
+    sini = np.sin(np.radians(incl))
+    cosi = np.cos(np.radians(incl))
+    sinphi = np.sin(phi)
+    cosphi = np.cos(phi)
+    sin2phi = sinphi**2
+    cos2phi = cosphi**2
+    sin2i = sini**2
+    cos2i = cosi**2
+    a_2 = 1./ax**2
+    b_2 = 1./bx**2
+    c_2 = 1./cx**2
+
+    #eqn 20 - 22 correia 2014
+    A = (a_2*cos2phi + b_2*sin2phi)**(-0.5)
+    #B = ((a2-b2)*2*sinphi*cosi*cosi)**(-0.5)
+    C = ((a_2*sin2phi + b_2*cos2phi)*cos2i + c_2*sin2i)**(-0.5)
+        
+    proj_area = np.pi*A*C
+        
+
+    
+    return proj_area, abc 
 
 
