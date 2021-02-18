@@ -38,7 +38,7 @@ except:
 
 
 try:
-      from ellc.lc import lc
+      from ellc.lc import lc, projected_ellipse_area
 except:
       pass
 
@@ -61,4 +61,3 @@ try:
       from ellc.ldy import ldy
 except:
       pass
-

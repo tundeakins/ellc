@@ -621,5 +621,127 @@ def lc(t_obs, radius_1, radius_2, sbratio, incl,
     flux[n_int_array == 0 ] = np.interp(t_obs_0,t_int,f_int)
 
   return flux
- 
+
+
+def projected_ellipse_area(phases,Rv,aR,hf,qmass,incl):
+    """
+    Calculate the phases-depended projected area of a triaxial ellipsoid (ellipse).
+    Minimum projected area is at mid transit (phases 0) 
+    
+    Parameters:
+    -----------
+    phases: float; array-like;
+        Input phases to calculate
+    
+    Rv: float;
+        Volumetric radius (abc)**1/3 of the ellipsoid
+        
+    aR: float;
+        scaled semi-major axis
+    
+    hf: float;
+        second fluid Love number of the planet
+        
+    qmass: float;
+        ratio of planet to stellar mass
+        
+    incl : float;
+        inclination of the orbit in degrees
+        
+    Returns:
+    --------
+    proj_area, abc : float/array-like, array;
+        projected area of the ellipse (proj_area), and the semiprincipal axes abc= [a,b,c] of the ellipsoid.
+        To get the projected radius of the planet Rtr  = sqrt(proj_area/pi)
+    	
+     
+    """
+    #Equations for a_p, b_p and phi adapted from mathworld.wolfram.com/Ellipse.html
+    #equation numbers given in comments).
+    qr = 0.5*hf*1/qmass*(Rv/aR)**3
+    bx = Rv*(1-(2./3.)*qr + (17./9.)*qr**2 - (328./81.)*qr**3 + (2558./243.)*qr**4)
+    ax = bx*(1.+3.*qr)          #eqn(10) correia 2014
+    cx = bx*(1.-qr)
+    abc=np.array([ax,bx,cx])
+    
+    
+    
+    phis = np.radians(phases*360)
+    proj_area = np.zeros_like(phis)
+    
+    for i, phi in enumerate(phis):
+        sini = np.sin(np.radians(incl))
+        cosi = np.cos(np.radians(incl))
+        sinphi = np.sin(phi)
+        cosphi = np.cos(phi)
+        sin2phi = sinphi**2
+        cos2phi = cosphi**2
+        sin2i = sini**2
+        cos2i = cosi**2
+        a2 = 1./ax**2
+        b2 = 1./bx**2
+        c2 = 1./cx**2
+
+        #area = np.sqrt(cx**2*sin2i*(ax**2*sin2phi+bx**2*cos2phi)+ax**2*bx**2*cos2i)
+
+        t1 = sinphi*cosphi*(a2-b2)
+        t2 = sini*cosi*(c2 - cos2phi*a2 - sin2phi*b2)
+        t3 = sin2i*(cos2phi*a2 + sin2phi*b2) + cos2i*c2
+        t4 = sin2phi*a2 + cos2phi*b2
+        t5 = cos2phi*cos2i*a2 + sin2phi*cos2i*b2 + sin2i*c2 
+        t6 = t1*sini
+        t7 = -t1*cosi
+
+        aa = t6**2/t3 - t4
+        cc = t2**2/t3 - t5
+        anorm = max(abs(aa),abs(cc))
+        a,b,c,d,f,g = aa/anorm, (t2*t6/t3 - t7)/anorm, cc/anorm,0, 0,1./anorm 
+        
+        #Calculate ellipse parameters
+        b2 = b**2
+        d2 = d**2
+        f2 = f**2
+
+        dd = a*(c*g-f2) - b*(b*g-f*d) + d*(b*f-c*d)    #(16)
+        jj = a*c - b2    #(17)
+        ii = a + c     #(18)
+
+        #(19), (20)
+        x_c = (b*f - c*d)/jj 
+        y_c = (b*d - a*f)/jj
+
+        num =2.*(a*f2 + c*d2 + g*b2 - 2.*b*d*f - a*c*g) 
+        ss = np.sqrt((a-c)**2 + 4.*b2)
+
+        #(21), (22) - added logic here so that a_p > b_p
+        t1 = np.sqrt(num/(jj*(ii - ss)))  
+        t2 = np.sqrt(num/(jj*(ii + ss)))  
+        if (t1 > t2):
+            a_p = t1
+            b_p = t2
+        else:
+            a_p = t2 
+            b_p = t1
+
+        #(23)
+        if (a == c):
+            if (t1 > t2):
+                phi = 1.5*halfpi
+            else:
+                phi = 0.5*halfpi
+        elif ((a < c) == (t1 > t2)):
+            if (b == 0):
+                phi = 0
+            else:
+                phi =  (0.5*np.pi -np.arctan((a-c))/(2.*b))/2.
+        else:
+            if (b == 0.):
+                phi = 0.5*np.pi
+            else:
+                phi = 0.5*np.pi + (0.5*np.pi -np.arctan((a-c))/(2.*b))/2.
+        
+        proj_area[i] = np.pi*a_p*b_p 
+
+    return proj_area, abc #, np.cos(phi), np.sin(phi)
+
 
