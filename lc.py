@@ -731,9 +731,9 @@ def projected_ellipse_area(phases,Rv,aR,hf,qmass,incl, tmid =0):
         #(23)
         if (a == c):
             if (t1 > t2):
-                phi = 1.5*halfpi
+                phi = 1.5*0.5*np.pi
             else:
-                phi = 0.5*halfpi
+                phi = 0.5*0.5*np.pi
         elif ((a < c) == (t1 > t2)):
             if (b == 0):
                 phi = 0
