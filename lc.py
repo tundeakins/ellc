@@ -557,7 +557,7 @@ def lc(t_obs, radius_1, radius_2, sbratio, incl,
     if rotfac_1 != 1:
       raise Exception(
                 'Non-synchronous rotation not implemented for shape_1="love"')
-    if (hf_1 < 0.) or (hf_1 > 5/2.):
+    if (hf_1 < 0.) or (hf_1 > 2.5):
         raise Exception('Invalid value for hf_1')
     par[37] = hf_1
 
@@ -565,7 +565,7 @@ def lc(t_obs, radius_1, radius_2, sbratio, incl,
     if rotfac_2 != 1:
       raise Exception(
                 'Non-synchronous rotation not implemented for shape_2="love"')
-    if (hf_2 < 0.) or (hf_2 > 5/2.):
+    if (hf_2 < 0.) or (hf_2 > 2.5):
         raise Exception('Invalid value for hf_2')
     par[38] = hf_2
      
@@ -603,7 +603,7 @@ def lc(t_obs, radius_1, radius_2, sbratio, incl,
         w_calc = np.append(w_calc, np.ones_like(t_obs_i)/(i_int-1.))
 
   lc_rv_flags = ellc_f.ellc.lc(t_calc,par,ipar,spar_1,spar_2,
-                n_mugrid_1, mugrid_1,n_mugrid_2, mugrid_2, 0)
+                n_mugrid_1, mugrid_1,n_mugrid_2, mugrid_2, verbose)
   if ((np.sum(np.isnan(lc_rv_flags)) > 0 )) & (verbose > 0):
     lc_dummy = ellc_f.ellc.lc(t_calc,par,ipar,spar_1,spar_2,
                n_mugrid_1, mugrid_1,n_mugrid_2, mugrid_2,9)
@@ -621,7 +621,7 @@ def lc(t_obs, radius_1, radius_2, sbratio, incl,
     flux[n_int_array == 0 ] = np.interp(t_obs_0,t_int,f_int)
 
   return flux
-
+ 
 
 def projected_ellipse_area(phases,Rv,aR,hf,qmass,incl, tmid =0):
     """

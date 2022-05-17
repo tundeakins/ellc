@@ -561,7 +561,7 @@ def rv(t_obs, radius_1=None, radius_2=None, sbratio=None, incl=None,
       if rotfac_1 != 1:
         raise Exception(
                   'Non-synchronous rotation not implemented for shape_1="love"')
-      if (hf_1 <= 2/3.) or (hf_1 > 5):
+      if (hf_1 < 0.) or (hf_1 > 2.5):
           raise Exception('Invalid value for hf_1')
       par[37] = hf_1
    
@@ -569,7 +569,7 @@ def rv(t_obs, radius_1=None, radius_2=None, sbratio=None, incl=None,
       if rotfac_2 != 1:
         raise Exception(
                   'Non-synchronous rotation not implemented for shape_2="love"')
-      if (hf_2 <= 2/3.) or (hf_2 > 5):
+      if (hf_2 < 0.) or (hf_2 > 2.5):
           raise Exception('Invalid value for hf_2')
       par[38] = hf_2
 

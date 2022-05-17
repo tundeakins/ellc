@@ -1244,7 +1244,16 @@ do iter = 1, itmax
      endif
    endif
  end do
- if (verbose >= v_warn) print *,'brent: failed to converge'
+ if (verbose >= v_warn) then
+   print *,'brent: failed to converge'
+   print *, v,w,x,u
+   print *, fv,fw,fx,fu
+   print *, abs(x-xm), tol1, tol2
+ endif
+ xmin = x
+ brent = fx
+ return
+
  contains
 
  subroutine shft(a,b,c,d)

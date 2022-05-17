@@ -395,7 +395,7 @@ sphere_2 =  (imodel2 == starshape_sphere)
 if (imodel1 == starshape_love) then
   frot1 = 1
   hf1 = binary_pars(38)
-  if ((hf1 < 0.).or.(hf1 > 5/2.)) then
+  if ((hf1 < 0.).or.(hf1 > 2.5)) then
     if (verbose > v_silent) then
       print *,'End ELLC - invalid value for h_f,1'
       print *,'h_f,1 = ',hf1
@@ -417,7 +417,7 @@ endif
 if (imodel2 == starshape_love) then
   frot2 = 1
   hf2 = binary_pars(39)
-  if ((hf2 < 0.).or.(hf2 > 5/2.)) then
+  if ((hf2 < 0.).or.(hf2 > 2.5)) then
     if (verbose > v_silent) then
       print *,'End ELLC - invalid value for h_f,2'
       print *,'h_f,2 = ',hf2
@@ -1000,6 +1000,7 @@ do iobs=0,n_obs
   ! Light travel time correction
   if (dolite) then
     t1 = time + alite1*w1
+    if (verbose >= v_debug) print '(A,E12.4)',' LTTE star 1 = ',alite1*w1
     mm = twopi*mod((t1-tperi0)/p_anom,1.0d0)
     ee = eanom(mm,ecc)
     r_1 = 1.0d0 - ecc*cos(ee)
@@ -1007,6 +1008,7 @@ do iobs=0,n_obs
     cosnu_1 = cos(true_anomaly_1) 
     sinnu_1 = sin(true_anomaly_1) 
     t2 = time + alite2*w2
+    if (verbose >= v_debug) print '(A,E12.4)',' LTTE star 2 = ',alite2*w2
     mm = twopi*mod((t2-tperi0)/p_anom,1.0d0)
     ee = eanom(mm,ecc)
     r_2 = 1.0d0 - ecc*cos(ee)
@@ -1204,6 +1206,9 @@ do iobs=0,n_obs
         endif
       else if (btest(overlap,b_ell_identical)) then
         eclipse_type = ibset(eclipse_type,b_ellc_total)
+        if (verbose >= v_debug) then
+          print *,'ellc: b_ell_identical'
+        endif
       else if (btest(overlap,b_ell_four_intersects)) then
         eclipse_type = ibset(eclipse_type,b_ellc_double_partial)
       endif
@@ -1808,8 +1813,8 @@ do iobs=0,n_obs
     endif
 
     flux_rv_flag(iobs,1) = (flux_1+flux_2+flux_3+refl_1+refl_2)/fnorm
-    flux_rv_flag(iobs,2) = flux_1+refl_1
-    flux_rv_flag(iobs,3) = flux_2+refl_2
+    flux_rv_flag(iobs,2) = (flux_1+refl_1)/fnorm
+    flux_rv_flag(iobs,3) = (flux_2+refl_2)/fnorm
     flux_rv_flag(iobs,4) = rv1
     flux_rv_flag(iobs,5) = rv2
     flux_rv_flag(iobs,6) = return_flags

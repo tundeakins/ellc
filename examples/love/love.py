@@ -37,7 +37,7 @@ flux_2 = ellc.lc(t,radius_1=r_1, radius_2=r_2,incl=incl,sbratio=sbratio,
     grid_1='default',grid_2='default', f_s=f_s, f_c=f_c)
 
 flux_4 = ellc.lc(t,radius_1=r_1, radius_2=r_2,incl=incl,sbratio=sbratio,
-    ld_1=ld_1, ldc_1=ldc_1,shape_1='sphere',shape_2='love',hf_2=4.0,q=q,
+    ld_1=ld_1, ldc_1=ldc_1,shape_1='sphere',shape_2='love',hf_2=2.5,q=q,
     grid_1='default',grid_2='default', f_s=f_s, f_c=f_c)
 
 fig=plt.figure(1,figsize=(6,8))
@@ -46,14 +46,14 @@ plt.xlim([-0.05,0.05])
 plt.ylim([0.975,1.002])
 line_0, = plt.plot(t, flux_0, 'k-',label='sphere')
 line_2, = plt.plot(t, flux_2, 'c--',label='h_f = 2')
-line_4, = plt.plot(t, flux_4, 'g:', label='h_f = 4')
+line_4, = plt.plot(t, flux_4, 'g:', label='h_f = 2.5')
 plt.ylabel("Flux",fontsize=16)
 plt.legend(handles=[line_0,line_2,line_4],loc='lower left')
 
 plt.subplot(212)
 plt.xlim([-0.05,0.05])
 line_2, = plt.plot(t, 1e6*(flux_2-flux_0), 'c--', label='h_f = 2')
-line_4, = plt.plot(t, 1e6*(flux_4-flux_0), 'g:', label='h_f = 4')
+line_4, = plt.plot(t, 1e6*(flux_4-flux_0), 'g:', label='h_f = 2.5')
 plt.ylabel("Flux difference [ppm]",fontsize=16)
 plt.legend(handles=[line_2,line_4],loc='upper left')
 

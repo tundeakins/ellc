@@ -193,4 +193,21 @@ Version sent to A&A
  
 1.8.2 (2018-12-19)
 ~~~~~~~~~~~~~~~~~~
-  - improved reliability of bright() function for the case exact_grav=True
+ - improved reliability of bright() function for the case exact_grav=True
+ - fix for case of exactly overlapping circles.
+ 
+1.8.3 (2019-05-16)
+~~~~~~~~~~~~~~~~~~
+ - fixed bugs in fluxes.py
+ 
+1.8.4 (2019-05-17)
+~~~~~~~~~~~~~~~~~~
+ - output from fluxes() now normalized consistently with output from lc() 
+ 
+1.8.5 (2019-08-08)
+~~~~~~~~~~~~~~~~~~
+ - added installation hint for mac users
+ 
+1.8.6 (2021-01-13)
+~~~~~~~~~~~~~~~~~~
+ - added exit-with-best-guess to brent for cases where convergence fails

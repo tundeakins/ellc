@@ -701,6 +701,7 @@ d = 0 !radius*qmass*radius**4    !From Chandrasekhar using delta_3 = 1
 if (verbose > v_debug) print *,'shape_love: a,b,c,d,qr =', a,b,c,d,qr
 end subroutine shape_love
 
+
 !-----------------------------------------------------------------------
 
 double precision function func_a(a,npar,par,verbose)
